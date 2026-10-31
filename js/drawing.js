@@ -36,6 +36,13 @@ function starPoints(cx, cy, outer, inner, count = 5) {
   });
 }
 
+function regularPolygonPoints(cx, cy, radius, sides, rotation = 0) {
+  return Array.from({ length: sides }, (_, index) => {
+    const angle = rotation + index * Math.PI * 2 / sides;
+    return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius];
+  });
+}
+
 function drawShape(context, tool, start, point, options) {
   const x = Math.min(start.x, point.x); const y = Math.min(start.y, point.y);
   const w = Math.abs(point.x - start.x); const h = Math.abs(point.y - start.y);
@@ -48,6 +55,31 @@ function drawShape(context, tool, start, point, options) {
   else if (tool === "diamond") polygonPath(context, [[cx, y], [x + w, cy], [cx, y + h], [x, cy]]);
   else if (tool === "star") polygonPath(context, starPoints(cx, cy, Math.max(w, h) / 2, Math.max(w, h) / 4, 5));
   else if (tool === "arrow") polygonPath(context, [[x, cy - h * .18], [x + w * .55, cy - h * .18], [x + w * .55, y], [x + w, cy], [x + w * .55, y + h], [x + w * .55, cy + h * .18], [x, cy + h * .18]]);
+  else if (tool === "pentagon") polygonPath(context, regularPolygonPoints(cx, cy, Math.min(w, h) / 2, 5, -Math.PI / 2));
+  else if (tool === "hexagon") polygonPath(context, regularPolygonPoints(cx, cy, Math.min(w, h) / 2, 6, Math.PI / 6));
+  else if (tool === "parallelogram") polygonPath(context, [[x + w * .2, y], [x + w, y], [x + w * .8, y + h], [x, y + h]]);
+  else if (tool === "trapezoid") polygonPath(context, [[x + w * .2, y], [x + w * .8, y], [x + w, y + h], [x, y + h]]);
+  else if (tool === "right-triangle") polygonPath(context, [[x, y], [x, y + h], [x + w, y + h]]);
+  else if (tool === "heart") {
+    context.beginPath();
+    context.moveTo(cx, y + h);
+    context.bezierCurveTo(x + w * .1, y + h * .65, x + w * .05, y + h * .25, x + w * .28, y + h * .18);
+    context.bezierCurveTo(x + w * .4, y + h * .14, cx, y + h * .22, cx, y + h * .34);
+    context.bezierCurveTo(cx, y + h * .22, x + w * .6, y + h * .14, x + w * .72, y + h * .18);
+    context.bezierCurveTo(x + w * .95, y + h * .25, x + w * .9, y + h * .65, cx, y + h);
+  } else if (tool === "cloud") {
+    context.beginPath(); context.moveTo(x + w * .15, y + h * .75);
+    context.bezierCurveTo(x - w * .02, y + h * .48, x + w * .18, y + h * .2, x + w * .4, y + h * .28);
+    context.bezierCurveTo(x + w * .5, y - h * .02, x + w * .82, y + h * .02, x + w * .84, y + h * .3);
+    context.bezierCurveTo(x + w * 1.1, y + h * .2, x + w * 1.12, y + h * .75, x + w * .85, y + h * .78);
+    context.lineTo(x + w * .15, y + h * .78); context.closePath();
+  } else if (tool === "lightning") polygonPath(context, [[x + w * .55, y], [x + w * .18, y + h * .55], [x + w * .45, y + h * .55], [x + w * .3, y + h], [x + w * .82, y + h * .35], [x + w * .53, y + h * .35]]);
+  else if (tool === "cylinder") {
+    context.beginPath(); context.ellipse(cx, y + h * .16, w / 2, Math.max(1, h * .16), 0, 0, Math.PI * 2);
+    context.moveTo(x, y + h * .16); context.lineTo(x, y + h * .82);
+    context.ellipse(cx, y + h * .82, w / 2, Math.max(1, h * .16), 0, 0, Math.PI);
+    context.lineTo(x, y + h * .16);
+  }
   else if (tool === "speech") {
     context.beginPath(); context.roundRect(x, y, w, h * .78, Math.min(14, Math.min(w, h) / 5));
     context.moveTo(x + w * .22, y + h * .78); context.lineTo(x + w * .12, y + h); context.lineTo(x + w * .42, y + h * .78);
@@ -56,10 +88,10 @@ function drawShape(context, tool, start, point, options) {
   context.stroke();
 }
 
-export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptions, onCursorMove, onCommit, onBegin, onPickColor, onSelection, onTextStart }) {
-  const canvas = paintCanvas.element; const context = paintCanvas.context; let active = false; let moving = false; let resizeMode = null; let start = null; let backup = null; let selection = null; let movingImage = null;
+export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptions, onCursorMove, onCommit, onBegin, onPickColor, onSelection, onTextStart, onMagnify, onCursorStyle }) {
+  const canvas = paintCanvas.element; const context = paintCanvas.context; let active = false; let moving = false; let resizeMode = null; let start = null; let backup = null; let selection = null; let movingImage = null; let selectionSource = null; let canvasChanged = false;
   const stroke = () => { context.strokeStyle = getColor(); context.lineWidth = getSize(); context.lineCap = getOptions().brushType === "pencil" ? "square" : "round"; context.lineJoin = "round"; };
-  const shapeTools = ["line", "rectangle", "round-rectangle", "ellipse", "triangle", "diamond", "star", "arrow", "speech"];
+  const shapeTools = ["line", "rectangle", "round-rectangle", "ellipse", "triangle", "diamond", "star", "arrow", "speech", "pentagon", "hexagon", "parallelogram", "trapezoid", "right-triangle", "heart", "cloud", "lightning", "cylinder"];
   const shape = (point) => drawShape(context, getTool(), start, point, { ...getOptions(), shapeFill: getColor() });
   const spray = (point) => {
     const radius = Math.max(8, getSize() * 2); const dots = Math.max(12, getSize() * 4);
@@ -118,7 +150,8 @@ export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptio
   };
   const selectionHandle = (point) => {
     if (!selection || selection.width < 1 || selection.height < 1) return null;
-    const edge = Math.max(8, getSize() * 2);
+    const scale = canvas.getBoundingClientRect().width / canvas.width;
+    const edge = Math.max(10, getSize() * 2, 10 / Math.max(scale, .1));
     const left = Math.abs(point.x - selection.x) <= edge;
     const right = Math.abs(point.x - (selection.x + selection.width)) <= edge;
     const top = Math.abs(point.y - selection.y) <= edge;
@@ -151,16 +184,30 @@ export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptio
   canvas.addEventListener("pointerdown", (event) => {
     if (event.button !== 0) return; const point = paintCanvas.getPoint(event); onCursorMove(point);
     if (getTool() === "picker") { onPickColor(context.getImageData(Math.floor(point.x), Math.floor(point.y), 1, 1).data); return; }
+    if (getTool() === "magnifier") { onMagnify(event.shiftKey ? -1 : 1); return; }
     if (getTool() === "fill") { onBegin(); floodFill(context, point, getColor()); paintCanvas.notify(); onCommit(); return; }
     if (getTool() === "text") { onTextStart(point); return; }
-    active = true; start = point; onBegin(); backup = paintCanvas.snapshot();
-    if (getTool() === "select" && selection) {
-      resizeMode = selectionHandle(point);
-      const inside = point.x >= selection.x && point.x <= selection.x + selection.width && point.y >= selection.y && point.y <= selection.y + selection.height;
-      if (resizeMode) movingImage = context.getImageData(selection.x, selection.y, selection.width, selection.height);
-      else if (inside) { moving = true; movingImage = context.getImageData(selection.x, selection.y, selection.width, selection.height); }
+    active = true; start = point; canvasChanged = getTool() !== "select";
+    if (getTool() === "select") {
+      if (selection) {
+        resizeMode = selectionHandle(point);
+        const inside = point.x >= selection.x && point.x <= selection.x + selection.width && point.y >= selection.y && point.y <= selection.y + selection.height;
+        if (resizeMode || inside) {
+          onBegin(); backup = paintCanvas.snapshot(); canvasChanged = true;
+          if (resizeMode) {
+            if (!selectionSource) selectionSource = context.getImageData(selection.x, selection.y, selection.width, selection.height);
+            movingImage = selectionSource;
+          } else {
+            moving = true; movingImage = context.getImageData(selection.x, selection.y, selection.width, selection.height);
+          }
+        } else {
+          selection = null; selectionSource = null; onSelection(null);
+        }
+      }
+    } else {
+      onBegin(); backup = paintCanvas.snapshot();
     }
-    canvas.setPointerCapture(event.pointerId); stroke();
+    if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId); stroke();
     if (getTool() === "pencil" || getTool() === "brush" || getTool() === "eraser") {
       if (getOptions().brushType === "spray") spray(point);
       else if (getOptions().brushType === "crayon") crayon(point);
@@ -169,20 +216,35 @@ export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptio
     }
   });
   canvas.addEventListener("pointermove", (event) => {
-    const point = paintCanvas.getPoint(event); onCursorMove(point); if (!active) return;
+    const point = paintCanvas.getPoint(event); onCursorMove(point);
+    if (!active) {
+      if (getTool() === "select" && selection) {
+        const handle = selectionHandle(point);
+        onCursorStyle(handle ? `${handle}-resize` : "crosshair");
+      }
+      return;
+    }
     if (shapeTools.includes(getTool())) { paintCanvas.restore(backup); stroke(); shape(point); return; }
     if (getTool() === "select") {
-      paintCanvas.restore(backup);
       if (moving && movingImage) {
+        paintCanvas.restore(backup);
         const x = Math.round(selection.x + point.x - start.x); const y = Math.round(selection.y + point.y - start.y);
         context.fillStyle = "#ffffff"; context.fillRect(selection.x, selection.y, selection.width, selection.height); context.putImageData(movingImage, x, y);
       } else if (resizeMode && movingImage) {
+        paintCanvas.restore(backup);
         const next = resizedSelection(point);
         const temporary = document.createElement("canvas");
         temporary.width = movingImage.width; temporary.height = movingImage.height;
-        temporary.getContext("2d").putImageData(movingImage, 0, 0);
+        const temporaryContext = temporary.getContext("2d");
+        temporaryContext.imageSmoothingEnabled = false;
+        temporaryContext.putImageData(movingImage, 0, 0);
         context.fillStyle = "#ffffff"; context.fillRect(selection.x, selection.y, selection.width, selection.height);
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "high";
         context.drawImage(temporary, next.x, next.y, next.width, next.height);
+      } else {
+        selection = { x: Math.min(start.x, point.x), y: Math.min(start.y, point.y), width: Math.abs(start.x - point.x), height: Math.abs(start.y - point.y) };
+        onSelection(selection);
       }
       return;
     }
@@ -197,7 +259,7 @@ export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptio
     }
   });
   const stop = (event) => {
-    if (!active) return; const point = paintCanvas.getPoint(event); active = false; if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    if (!active) return; const point = paintCanvas.getPoint(event); active = false; if (canvas.hasPointerCapture && canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
     if (getTool() === "select") {
       if (moving && movingImage) {
         selection = { x: Math.round(selection.x + point.x - start.x), y: Math.round(selection.y + point.y - start.y), width: selection.width, height: selection.height };
@@ -205,12 +267,44 @@ export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptio
         selection = resizedSelection(point);
       } else {
         selection = { x: Math.min(start.x, point.x), y: Math.min(start.y, point.y), width: Math.abs(start.x - point.x), height: Math.abs(start.y - point.y) };
-        paintCanvas.restore(backup);
+        selectionSource = selection.width > 0 && selection.height > 0
+          ? context.getImageData(selection.x, selection.y, selection.width, selection.height)
+          : null;
       }
-      onSelection(selection); moving = false; resizeMode = null; movingImage = null;
+      if (moving || resizeMode) {
+        selectionSource = selection.width > 0 && selection.height > 0
+          ? context.getImageData(selection.x, selection.y, selection.width, selection.height)
+          : null;
+      }
+      onSelection(selection); moving = false; resizeMode = null; movingImage = null; onCursorStyle("crosshair");
     }
-    context.closePath(); paintCanvas.notify(); onCommit();
+    context.closePath();
+    if (canvasChanged) { paintCanvas.notify(); onCommit(); }
+    backup = null;
   };
   canvas.addEventListener("pointerup", stop); canvas.addEventListener("pointercancel", stop);
-  canvas.addEventListener("pointerleave", () => { if (!active) onCursorMove(null); });
+  canvas.addEventListener("pointerleave", () => { if (!active) { onCursorMove(null); onCursorStyle("crosshair"); } });
+  return {
+    setSelection(value) {
+      selection = value ? { ...value } : null;
+      selectionSource = null;
+      moving = false;
+      resizeMode = null;
+      movingImage = null;
+    },
+    cancelSelection() {
+      if (active && backup) paintCanvas.restore(backup);
+      active = false;
+      moving = false;
+      resizeMode = null;
+      start = null;
+      backup = null;
+      selection = null;
+      selectionSource = null;
+      movingImage = null;
+      canvasChanged = false;
+      onSelection(null);
+      onCursorStyle("crosshair");
+    }
+  };
 }

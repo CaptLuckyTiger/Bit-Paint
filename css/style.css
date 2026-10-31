@@ -155,6 +155,75 @@ kbd {
   margin-left: auto;
 }
 
+.app-dialog {
+  width: min(390px, calc(100vw - 32px));
+  padding: 0;
+  color: #1f2937;
+  border: 1px solid #9ca3af;
+  border-radius: 5px;
+  box-shadow: 0 8px 26px rgba(31, 41, 55, .28);
+}
+
+.app-dialog::backdrop {
+  background: rgba(31, 41, 55, .28);
+}
+
+.app-dialog form {
+  padding: 20px;
+  display: grid;
+  gap: 8px;
+}
+
+.app-dialog h2 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.app-dialog p {
+  margin: 0 0 8px;
+  white-space: pre-line;
+}
+
+#app-dialog-fields {
+  display: grid;
+  gap: 8px;
+}
+
+.app-dialog-field {
+  display: grid;
+  gap: 4px;
+}
+
+.app-dialog input,
+.app-dialog select {
+  min-height: 32px;
+  padding: 5px 8px;
+  border: 1px solid #9ca3af;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.dialog-actions button {
+  padding: 6px 13px;
+  border: 1px solid #9ca3af;
+  border-radius: 3px;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.dialog-actions .primary-button {
+  color: #fff;
+  border-color: #1d4ed8;
+  background: #2563eb;
+}
+
 .swap-button {
   padding: 5px 9px;
   border: 1px solid #b9bec5;

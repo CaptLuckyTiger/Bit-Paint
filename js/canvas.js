@@ -10,14 +10,14 @@ export class PaintCanvas {
     this.resize(DEFAULT_WIDTH, DEFAULT_HEIGHT, false);
   }
 
-  resize(width, height, preserve = true) {
+  resize(width, height, preserve = true, offsetX = 0, offsetY = 0) {
     const old = preserve ? document.createElement("canvas") : null;
     if (old) { old.width = this.element.width; old.height = this.element.height; old.getContext("2d").drawImage(this.element, 0, 0); }
     this.element.width = Math.max(1, Math.round(width));
     this.element.height = Math.max(1, Math.round(height));
     this.context.fillStyle = "#ffffff";
     this.context.fillRect(0, 0, this.element.width, this.element.height);
-    if (old) this.context.drawImage(old, 0, 0);
+    if (old) this.context.drawImage(old, offsetX, offsetY);
     this.onChange();
   }
 

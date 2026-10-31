@@ -21,7 +21,8 @@ Depois, abra <http://localhost:8000>.
 - Lápis, pincel, borracha, spray, marcador, giz de cera e pincéis texturizados.
 - Pincéis a óleo, aquarela, natural e caligráfico.
 - Linhas, retângulos, retângulos arredondados, elipses, triângulos, losangos,
-  estrelas, setas e balões.
+  estrelas, pentágonos, hexágonos, paralelogramos, trapézios, triângulos
+  retângulos, setas, balões, corações, nuvens, relâmpagos e cilindros.
 - Formas com contorno e preenchimento.
 - Balde de preenchimento com tolerância de cores.
 - Conta-gotas, texto com fonte, tamanho, negrito e itálico.
@@ -31,10 +32,17 @@ Depois, abra <http://localhost:8000>.
 - Seleção retangular persistente, movimentação, redimensionamento por alças,
   copiar, recortar, colar, excluir e selecionar tudo.
 - Desfazer e refazer com atalhos de teclado.
-- Redimensionar, cortar, girar e inverter a imagem.
+- Redimensionar a imagem escalando o conteúdo, cortar, girar e inverter.
 - Filtros de escala de cinza, inversão de cores, sépia, brilho e contraste.
 - Zoom, ajuste à janela e indicação de coordenadas do cursor.
+- Lupa por clique (use `Shift` + clique para reduzir) e grade visual para alinhamento.
 - Importação de PNG, JPEG e WebP.
+- Colagem de imagens e prints diretamente da área de transferência do sistema
+  usando `Ctrl+V` ou o botão **Colar**, preservando a resolução original;
+  o canvas mantém seu tamanho quando já é maior e expande quando necessário.
+- Alças nos quatro cantos e nos lados da área de trabalho para redimensionar
+  largura e altura; uma prévia suave mostra o novo limite e a operação só é
+  aplicada ao soltar o mouse, podendo ser desfeita.
 - Exportação para PNG, JPEG e WebP.
 - Canvas com suporte a mouse, toque e caneta por Pointer Events.
 
