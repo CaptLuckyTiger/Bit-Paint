@@ -10,10 +10,12 @@ Como a aplicação usa módulos ES, execute-a por meio de um servidor HTTP local
 No PowerShell, a partir da pasta do projeto, por exemplo:
 
 ```powershell
-node -e "const http=require('http'),fs=require('fs'),path=require('path');const root=process.cwd();http.createServer((req,res)=>{let file=path.join(root,decodeURIComponent(req.url.split('?')[0]));if(req.url==='/'||req.url==='')file=path.join(root,'index.html');fs.readFile(file,(error,data)=>{if(error){res.writeHead(404);res.end();return;}res.end(data);});}).listen(8000)"
+npm start
 ```
 
 Depois, abra <http://localhost:8000>.
+O servidor fica acessível apenas neste computador. Como alternativa, execute
+`python -m http.server 8000 --bind 127.0.0.1` diretamente.
 
 ## Recursos
 
@@ -45,6 +47,16 @@ Depois, abra <http://localhost:8000>.
   aplicada ao soltar o mouse, podendo ser desfeita.
 - Exportação para PNG, JPEG e WebP.
 - Canvas com suporte a mouse, toque e caneta por Pointer Events.
+- Imagens transparentes, novo desenho com tamanho e fundo escolhidos e
+  exportação JPEG/WebP com qualidade ajustável.
+- Instalação como PWA e uso offline depois do primeiro carregamento online.
+
+## Instalar e usar offline
+
+Sirva o projeto por HTTP em `localhost` ou HTTPS e abra-o uma vez enquanto
+estiver online. O service worker guarda a interface e os módulos do editor para
+abrir novamente sem conexão. O navegador oferece a instalação quando o suporte
+está disponível.
 
 ## Atalhos
 
@@ -60,6 +72,9 @@ Depois, abra <http://localhost:8000>.
 | Novo | `Ctrl+N` |
 | Imprimir | `Ctrl+P` |
 | Excluir seleção | `Delete` |
+
+Ferramentas: `P` lápis, `B` pincel, `E` borracha, `G` preencher,
+`I` conta-gotas, `T` texto, `M` seleção e `Z` lupa.
 
 ## Estrutura
 
@@ -80,4 +95,4 @@ js/
 
 ## Licença
 
-Consulte o arquivo [LICENSE](./LICENSE).
+Apache-2.0. Consulte o arquivo [LICENSE](./LICENSE).
