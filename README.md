@@ -25,10 +25,14 @@ Depois, abra <http://localhost:8000>.
 - Formas com contorno e preenchimento.
 - Balde de preenchimento com tolerância de cores.
 - Conta-gotas, texto com fonte, tamanho, negrito e itálico.
+- Texto editável em uma caixa sobre o canvas, com múltiplas linhas, confirmação
+  e cancelamento antes da rasterização. A caixa pode ser movida pela barra
+  superior e redimensionada pela alça no canto inferior direito.
 - Seleção retangular persistente, movimentação, redimensionamento por alças,
   copiar, recortar, colar, excluir e selecionar tudo.
 - Desfazer e refazer com atalhos de teclado.
 - Redimensionar, cortar, girar e inverter a imagem.
+- Filtros de escala de cinza, inversão de cores, sépia, brilho e contraste.
 - Zoom, ajuste à janela e indicação de coordenadas do cursor.
 - Importação de PNG, JPEG e WebP.
 - Exportação para PNG, JPEG e WebP.

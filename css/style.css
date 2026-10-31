@@ -168,6 +168,89 @@ kbd {
   background: #e7eefb;
 }
 
+.text-editor {
+  position: absolute;
+  z-index: 4;
+  width: 260px;
+  min-width: 150px;
+  min-height: 92px;
+  padding: 3px;
+  border: 1px solid #2563eb;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 2px 6px rgba(31, 41, 55, .25);
+}
+
+.text-editor textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 3px;
+  display: block;
+  resize: both;
+  overflow: hidden;
+  border: 1px dashed #64748b;
+  outline: 0;
+  background: transparent;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+.text-editor-grip {
+  height: 18px;
+  padding: 1px 3px;
+  color: #475569;
+  background: #e7eefb;
+  cursor: move;
+  font-size: 10px;
+  user-select: none;
+}
+
+.text-editor-grip span {
+  float: right;
+  color: #2563eb;
+}
+
+.text-editor textarea:focus {
+  border-color: #2563eb;
+}
+
+.text-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.text-editor-actions button {
+  padding: 2px 7px;
+  border: 1px solid #b9bec5;
+  border-radius: 2px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.text-editor-actions button:first-child {
+  color: #fff;
+  border-color: #2563eb;
+  background: #2563eb;
+}
+
+.text-editor-actions button:hover {
+  filter: brightness(.95);
+}
+
+.text-editor-resize {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  width: 11px;
+  height: 11px;
+  border-right: 2px solid #2563eb;
+  border-bottom: 2px solid #2563eb;
+  cursor: nwse-resize;
+}
+
 @media (max-width: 620px) {
   .app-header {
     gap: 12px;

@@ -56,7 +56,7 @@ function drawShape(context, tool, start, point, options) {
   context.stroke();
 }
 
-export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptions, onCursorMove, onCommit, onBegin, onPickColor, onSelection }) {
+export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptions, onCursorMove, onCommit, onBegin, onPickColor, onSelection, onTextStart }) {
   const canvas = paintCanvas.element; const context = paintCanvas.context; let active = false; let moving = false; let resizeMode = null; let start = null; let backup = null; let selection = null; let movingImage = null;
   const stroke = () => { context.strokeStyle = getColor(); context.lineWidth = getSize(); context.lineCap = getOptions().brushType === "pencil" ? "square" : "round"; context.lineJoin = "round"; };
   const shapeTools = ["line", "rectangle", "round-rectangle", "ellipse", "triangle", "diamond", "star", "arrow", "speech"];
@@ -152,7 +152,7 @@ export function setupDrawing({ paintCanvas, getTool, getColor, getSize, getOptio
     if (event.button !== 0) return; const point = paintCanvas.getPoint(event); onCursorMove(point);
     if (getTool() === "picker") { onPickColor(context.getImageData(Math.floor(point.x), Math.floor(point.y), 1, 1).data); return; }
     if (getTool() === "fill") { onBegin(); floodFill(context, point, getColor()); paintCanvas.notify(); onCommit(); return; }
-    if (getTool() === "text") { const text = window.prompt("Texto para inserir:"); if (text) { onBegin(); const options = getOptions(); context.fillStyle = getColor(); context.font = `${options.italic ? "italic " : ""}${options.bold ? "bold " : ""}${options.fontSize}px ${options.fontFamily}`; context.fillText(text, point.x, point.y); paintCanvas.notify(); onCommit(); } return; }
+    if (getTool() === "text") { onTextStart(point); return; }
     active = true; start = point; onBegin(); backup = paintCanvas.snapshot();
     if (getTool() === "select" && selection) {
       resizeMode = selectionHandle(point);
